@@ -10,13 +10,8 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use App\Models\User;
 
-class BinomeInvitationMail extends Mailable
-{
+class BinomeInvitationMail extends Mailable{
     use Queueable, SerializesModels;
-
-    /**
-     * Create a new message instance.
-     */
 
     public $user;
 
@@ -24,21 +19,11 @@ class BinomeInvitationMail extends Mailable
         $this->user = $user;
     }
 
-    /**
-     * Get the message envelope.
-     */
     public function envelope(): Envelope {
         return new Envelope(
             subject: 'Binome Invitation Mail',
         );
     }
-
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
 
     public function attachments(): array {
         return [];

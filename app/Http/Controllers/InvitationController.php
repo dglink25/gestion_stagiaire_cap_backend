@@ -44,17 +44,16 @@ class InvitationController extends Controller{
                 'email_binome' => 'required|email|unique:users,email',
             ]);
 
-            $token = Str::random(60);
-
             $token1 = hash('sha256', Str::random(60));
             $token2 = hash('sha256', Str::random(60));
 
-            $hashedToken = hash('sha256', $token);
+            $hashedToken1 = hash('sha256', $token1);
+            $hashedToken2 = hash('sha256', $token2);
 
             $Invitation = Invitation::create([
                 'email' =>  $request->email,
                 'role' =>  $request->role,
-                'token' => $hashedToken,
+                'token' => $hashedToken1,
                 'invited_by' => $authUser->id,
                 'expires_at' => now()->addDays(7),
             ]);
@@ -62,7 +61,7 @@ class InvitationController extends Controller{
             $InvitationBinome = Invitation::create([
                 'email' =>  $request->email_binome,
                 'role' =>  $request->role,
-                'token' => $hashedToken,
+                'token' => $hashedToken2,
                 'invited_by' => $authUser->id,
                 'expires_at' => now()->addDays(7),
             ]);
