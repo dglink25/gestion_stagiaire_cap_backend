@@ -14,8 +14,7 @@ class InvitationController extends Controller{
         $authUser = $request->user();
 
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email|unique:users,email|unique:invitations,email',
             'role' => 'required|in:mentor,stagiaire',
             'en_binome' => 'required|boolean',
         ]);
@@ -41,16 +40,16 @@ class InvitationController extends Controller{
         if($request->en_binome && $request->role == 'stagiaire') {
             $request->validate([
                 'name_binome' => 'required|string|max:255',
-                'email_binome' => 'required|email|unique:users,email',
+                'email_binome' => 'required|email|unique:users,email|unique:invitations,email',
             ]);
 
-            $token1 = hash('sha256', Str::random(60));
-            $token2 = hash('sha256', Str::random(60));
+            $token1 = Str::random(60);
+            $token2 = Str::random(60);
 
             $hashedToken1 = hash('sha256', $token1);
             $hashedToken2 = hash('sha256', $token2);
 
-            $Invitation = Invitation::create([
+            $invitation = Invitation::create([
                 'email' =>  $request->email,
                 'role' =>  $request->role,
                 'token' => $hashedToken1,
@@ -58,7 +57,7 @@ class InvitationController extends Controller{
                 'expires_at' => now()->addDays(7),
             ]);
 
-            $InvitationBinome = Invitation::create([
+            $invitationBinome = Invitation::create([
                 'email' =>  $request->email_binome,
                 'role' =>  $request->role,
                 'token' => $hashedToken2,
@@ -66,8 +65,8 @@ class InvitationController extends Controller{
                 'expires_at' => now()->addDays(7),
             ]);
 
-            Mail::to($Invitation->email)->send(new BinomeInvitationMail($Invitation));
-            Mail::to($InvitationBinome->email)->send(new BinomeInvitationMail($InvitationBinome));
+            Mail::to($invitation->email)->send(new BinomeInvitationMail($invitation, $token1));
+            Mail::to($invitationBinome->email)->send(new BinomeInvitationMail($invitationBinome, $token2));
 
             return response()->json([
                 'message' => 'Invitations envoyées'
@@ -79,7 +78,7 @@ class InvitationController extends Controller{
 
             $hashedToken = hash('sha256', $token);
 
-            $Invitation = Invitation::create([
+            $invitation = Invitation::create([
                 'email' =>  $request->email,
                 'role' =>  $request->role,
                 'token' => $hashedToken,
@@ -87,7 +86,7 @@ class InvitationController extends Controller{
                 'expires_at' => now()->addDays(7),
             ]);
 
-            Mail::to($Invitation->email)->send(new BinomeInvitationMail($Invitation));
+            Mail::to($invitation->email)->send(new BinomeInvitationMail($invitation, $token));
 
             return response()->json([
                 'message' => 'Invitation envoyée'
