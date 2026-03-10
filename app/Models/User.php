@@ -17,6 +17,7 @@ class User extends Authenticatable{
         'accepted',
         'accepted_at',
         'id_user_invite',
+        'invite_token'
     ];
 
     protected $hidden = [

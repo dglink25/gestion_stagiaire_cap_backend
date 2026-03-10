@@ -9,6 +9,7 @@ return new class extends Migration{
         Schema::table('users', function (Blueprint $table) {
             $table->enum('role', ['admin', 'stagiaire', 'mentor'])->default('stagiaire');
             $table->foreignId('id_user_invite')->nullable()->constrained('users')->nullOnDelete();
+            $table->string('invite_token')->nullable();
             $table->boolean('accepted')->default(false);
             $table->timestamp('accepted_at')->nullable();
         });
